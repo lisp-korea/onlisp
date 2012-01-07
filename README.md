@@ -1,4 +1,4 @@
-Structure and Interpertation of Computer ProgramminOng Examples
+On Lisp Study Project
 =======================================
 
 
