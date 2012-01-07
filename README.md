@@ -29,17 +29,17 @@ How to
     * 생성된 key를 가신의 계정 Account Settings의 SSH Public Keys ->
        Add another public key에 등록합니다. 
  4. lisp-korea/onlisp [repo][lispkorea-onlisp-repo] 가져오기
-          $ git clone git@github.com:lisp-korea/onlisp.git
+    * $ git clone git@github.com:lisp-korea/onlisp.git
  5. git user 설정
-          $ git config --global user.name "user name" (github등록한 거요)
-          $ git config --global user.email "email 주소"
+    * $ git config --global user.name "user name" (github등록한 거요)
+    * $ git config --global user.email "email 주소"
  6. 개인 소스 올리기
-          $ cd ch01
-          practice-<id>.lisp or practice-<id>.clj 식으로 naming으로 소스 생성
-          문제가 없고 연습개념이라서 각자가 구분될 수 있는 정도면 될 것 같습니다.
-          $ git add <filename>
-          $ git commit -m "ex 1.1 by 누구누구"
-          $ git push origin master    
+    * $ cd ch01
+    * practice-<id>.lisp or practice-<id>.clj 식으로 naming으로 소스 생성
+    * 문제가 없고 연습개념이라서 각자가 구분될 수 있는 정도면 될 것 같습니다.
+    * $ git add <filename>
+    * $ git commit -m "ex 1.1 by 누구누구"
+    * $ git push origin master    
 [SICP]: http://mitpress.mit.edu/sicp/
 [lispkorea]: http://groups.google.com/group/lisp-korea
 [github]:http://github.com
