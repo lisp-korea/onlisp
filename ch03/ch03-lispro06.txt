@@ -1,0 +1,155 @@
+functions and macros, special forms(special operator)
+https://www.ibm.com/developerworks/mydeveloperworks/blogs/9e635b49-09e9-4c23-8999-a4d461aeace2/entry/224?lang=ko
+
+4.1 Birth of a Utility
+
+새로운 연산자 utilities
+null 이면 nil
+아니면, 재귀적으로 묶는 예제
+
+(defun nicknames (name)
+ (list nick (concatenate 'string "foo-", name)))
+
+(mapcar #'nicknames '("park" "jane" "june"))
+
+mapcar는 utility(= reinventing the wheel, 도구의 재발명)
+
+(defun find-books (towns)
+  (if (null towns)
+      nil
+    (let ((shops (bookshops (car towns))))
+      (if shops
+	  (values (car towns) shops)
+	(find-books (cdr towns))))))
+
+	shops를 불필요하게 사용 (inelegant)
+
+	용도가 단일화 되어있음
+
+(defun find2 (fn lst)
+  (if (null lst)
+      nil
+    (let ((val (funcall fn (car lst))))
+      (if val
+	  (values (car lst) val)
+	(find2 fn (cdr lst))))))
+
+
+다른 용도로도 사용 가능
+
+함수가 인자로 전달될 수 있다. - 상향식 프로그램에 적당한 이유
+
+두개의 함수보다는 두 개의 상수 -> general + utility
+
+4.2 Invest in Abstraction
+
+utility function : 잘 만들어야 하고, 범용성있게 만들어야 함
+
+
+4.3 Operations on Lists
+
+ Polo shirts are for Polo
+
+ list ( .=' 해시테이블, 배열)
+
+ last -> last cons 효과적 대체 last1
+
+ (defun last1 (lst)
+  (car (last lst)))
+
+  (1) -> 1
+
+ (defun single (lst)
+  (and (consp lst) (not (cdr lst))))
+-> 모든 리스트의 길이를 찾는 비효율성
+
+  심플한 정의
+  (defun single (lst)
+  (= 1 (length lst)))
+
+
+  ((defun single (lst)
+  (and (consp lst) (not (cdr lst))))
+  리스트이면 리스트로, 아니면 리스트로 리턴
+
+
+  --> 각각 비교를 통해 리스트의 길이 비교
+(defun longer (x y)
+  (labels ((compare (x y)
+		    (and (consp x)
+			 (or (null y)
+			     (compare (cdr x) (cdr y))))))
+    (if (and (listp x) (listp y))
+	(compare x y)
+      (> (length x) (length y)))))
+
+
+
+ref : remove-if not(적용된 값을 내지 않음)
+적용된 것을 리턴함
+(defun filter (fn lst)
+  (let ((acc nil)) ;반복
+    (dolist (x lst)
+      (let ((val (funcall fn x)))
+	(if val (push val acc))))
+    (nreverse acc)))
+
+;꼬리 재귀를 사용한 코드가 꼬인 함수
+(defun group (source n)
+  (if (zerop n) (error "zero length"))
+  (labels ((rec (source acc)
+		(let ((rest (nthcdr n source)))
+		  (if (consp rest)
+		      (rec rest (cons (subseq source 0 n) acc))
+		    (nreverse (cons source acc))))))
+    (if source (rec source nil) nil)))
+
+    common lisp gentle ~ 참고
+> (flatten '(a (b c) ((d e) f)))
+(A B C D E F)
+
+
+list 구조로 된 xml파싱/검색에 사용 가능
+(defun prune (test tree)
+  (labels ((rec (tree acc)
+		(cond ((null tree) (nreverse acc))
+		      ((consp (car tree))
+		       (rec (cdr tree)
+			    (cons (rec (car tree) nil) acc)))
+		      (t (rec (cdr tree)
+			      (if (funcall test (car tree))
+				  acc
+				(cons (car tree) acc)))))))
+    (rec tree nil)))
+
+4.4 Search
+
+&key : keyword임을 알려줌
+#'eql : 기본값임을 알려줌
+
+most보다는 best가 general 하다
+커스트마이징이 더 원할
+
+; 유틸리티 함수가 어디서 유래됐는지에 주목
+4.5 Mapping
+
+mapcar, map->(map보다 범용적이지만 다른 함수에 인자로 전달할 수 없다), mapcars, rmapcar
+
+the new series macros introduced in CLTL2.
+
+cltl2
+
+series
+
+#M L 리더매크로가 처리
+
+4.6 I/O
+
+runtime의 이미지를 파일로 제공하는 방식이므로 리스프 프로그램 안에 포함되어 있으므로 컴파일러를 사야함.
+
+4.7 Symbols and Strings
+
+intern -> 내부에 정의된 심볼인지 알려줌(intenal)
+
+알렉산드리아, 아르네시 : 유틸리티 함수의 집합!!!
+
