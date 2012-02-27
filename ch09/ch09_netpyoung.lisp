@@ -365,3 +365,27 @@ y
 
 ;; 9.9 Why Bother?
 ;; ...
+
+;; 392p - 128 gentemp
+(defpackage :tmp
+  (:use :cl))
+(in-package :tmp)
+(gentemp)
+;; T2
+(find-symbol "T2")
+;; T2
+;; :INTERNAL
+(defvar t2 10)
+(in-package :cl-user)
+(gentemp)
+;; T3
+(find-symbol "T2")
+;; NIL
+;; NIL
+t2
+
+(find-symbol "T2")
+;; T2
+;; :INTERNAL
+tmp::t2
+;; 10
