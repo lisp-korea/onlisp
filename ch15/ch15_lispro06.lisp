@@ -544,7 +544,7 @@
 
 
 (set-difference '(a b c d) '(a c))
-(D B)
+;(D B)
 
 
 ;Our new version handles multiple arguments much as - does. For example,
@@ -554,7 +554,7 @@
 ;새로운 버전은 다중 인자를 핸들링한다. 예를들어, (differences x y z)는 (set-difference x (unions y z))와 같은데 수반하는 후자의 cons가 없다.
 
 
-(setf rec (list 'e 'c 'b))
+
 
 (differences '(a b c d e) '(a f) '(d))
 ;(B C E)
@@ -597,8 +597,7 @@
 
 
 (maxmin '(3 4 2 8 5 1 6 7))
-;8
-;1
+;8, 1
 
 
 ;It would also have been possible to use on-cdrs in some of the code which
@@ -843,14 +842,6 @@
 
 ;스킴은 지연을 위한 내장 지원이 있다. 스킴 연산자들 force 와 delay는 15.7에 커먼 리습에서 구현될 수 있다. delay는 두 부분의 구조로 표현되었다. 첫번째 필드는 아직 평가되지 않은 delay를 지칭한다. 값을 포함하고 있고 가지고 있는 delay이다. 두번째 필드는 delay가 나타내는 갓을 찾는 호출을 할 수 있는 클로저를 포함한다. 매크로 delay는 수힉을 취하고 그것의 값을 표현하는 delay를 반환한다.
 
-(defun make-delay (fn)
-  "creates a new delay object"
-  (cons +unforced+ fn))
-
-(defun delay-p (x)
-  (and (consp x)
-       (or (eq (delay-value x) +unforced+)
-	   (null (delay-function x)))))
 
 (let ((x 2))
 (setq d (delay (1+ x))))
@@ -862,7 +853,7 @@
 ;; but for delays it is a demand for the value that the delay represents.
 
 ;delay 내의 클로저를 호출하는 것은 delay를 강제하는 것이다. 함수 force는 어떠한 객체도 취할 수 있다: identity 함수인 보통의 객체를 위해 그러나 delay가 표시하는 값을 위해 요구하는 delays를 위해.
-(setf d 3)
+
 
 (force 'a)
 ;A
