@@ -55,14 +55,16 @@
 
 (fn (and integerp oddp))
 
+(funcall (fn (and integerp oddp)) 3)
+;T
+
 ;yields a function equivalent to
 
 ;다음과 같은 함수를 유도한다.
 
 
 ;figure 15.1
-#'
-(lambda (x) (and (integerp x) (oddp x)))
+#'(lambda (x) (and (integerp x) (oddp x)))
 
 
 
@@ -105,6 +107,11 @@
 
 (fn (compose list 1+ truncate))
 
+(funcall (fn (compose list 1+ round)) 4.6)
+;(4)
+;truncate
+;ceilling
+;round
 
 ;expands into:
 
@@ -162,7 +169,7 @@
 
 
 (mapcar (fn (and integerp oddp))
-'(c 3 p 0))
+'(c 3 -4 6))
 ;(NIL T NIL NIL)
 
 
@@ -198,8 +205,8 @@
 
 (map1-n (fn (if oddp 1+ identity)) 6)
 ;(2 2 4 4 6 6)
-
-
+;identity
+;(identity 39)
 
 ;However, we can use other Lisp functions besides these three:
 
@@ -221,8 +228,10 @@
 
 (remove-if (fn (or (and integerp oddp)
 (and consp cdr)))
-'(1 (a b) c (d) 2 3.4 (e f g)))
+'(1 (1) c (d) 2 3.4 (e f g)))
 ;(C (D) 2 3.4)
+
+;(cdr '(a b))
 
 
 
@@ -244,8 +253,7 @@
 ;다음으로 확장된다.
 
 
-#'
-(lambda (#:g1)
+#'(lambda (#:g1)
     (list ((lambda (#:g2) (1+ (truncate #:g2))) #:g1)))
 
 
@@ -311,6 +319,8 @@
 (lrec #'(lambda (x f) (and (oddp x) (funcall f)))
       t)
 
+(funcall (lrec #'(lambda (x f) (and (oddp x) (funcall f))) t)
+      '(1 3))
 
 
 ;Here macros could make life easier. How much do we really have to say to
@@ -337,7 +347,7 @@
 
 
 (funcall (alrec (and (oddp it) rec) t)
-'(1 3 5))
+'(1 3 5 6))
 ;T
 
 
@@ -424,15 +434,24 @@
 (defun our-copy-list (lst)
   (on-cdrs (cons it rec) nil lst))
 
+(our-copy-list '(a g 1 4 5))
+
 (defun our-remove-duplicates (lst)
   (on-cdrs (adjoin it rec) nil lst))
+
+(our-remove-duplicates '(1 1 1 3 4 5))
 
 (defun our-find-if (fn lst)
   (on-cdrs (if (funcall fn it) it rec) nil lst))
 
+(our-find-if 'symbolp '(4 b e))
+;조건에 맞는 인자가 나오면 리턴하며 종료함.
+
 (defun our-some (fn lst)
   (on-cdrs (or (funcall fn it) rec) nil lst))
 
+(our-some 'evenp '(3 1 5))
+;하나의 인자라도 조건에 맞으면, T를 리턴한다.
 
 ;figure 15.3 Common Lisp functions defined with on-cdrs.
 
@@ -451,7 +470,13 @@
 (defun our-every (fn lst)
   (on-cdrs (and (funcall fn it) rec) t lst))
 
+(our-every 'oddp '(1 3 5 6))
+;모든 인자가 참일 경우 T 리턴
+(some 'evenp '(2 4 3))
+(every 'oddp '(1 3 5))
 
+(our-length '(2 3 4))
+(length '(1 v d 4))
 ;Figure 15.3 shows some existing Common Lisp functions defined with the new
 ;macro. Expressed with on-cdrs, these functions are reduced to their most
 ;basic form, and we notice similarities between them which might not
@@ -490,7 +515,7 @@
 
 
 
-
+(union '(a b) '(b c))
 (unions '(a b) '(b c) '(c d))
 ;(D C A B)
 
@@ -503,6 +528,10 @@
   (unless (some #'null sets)
     (on-cdrs (intersection it rec) (car sets) (cdr sets))))
 
+(intersections '(1 3 5) '(3 5) '(1 2 3))
+(intersection '(1 3 5) '(2 4 6 5) :key (lambda (a) (when (evenp a) (+ 1 a))))
+
+
 (defun differences (set &rest outs)
   (on-cdrs (set-difference rec it) set outs))
 
@@ -513,7 +542,7 @@
              (values (car args) (car args))
              (cdr args))))
 ;figure 15.4 New utilities defined with on-cdrs.
-
+(maxmin '(1 3 5 7 2 4 6))
 
 
 ;Like union, unions does not preserve the order of the elements in the
@@ -783,11 +812,15 @@
 (defun our-copy-tree (tree)
   (on-trees (cons left right) it tree))
 
+(count-leaves '((a b (c 0 ) ((((d )))))))
+
 (defun count-leaves (tree)
   (on-trees (+ left (or right 1)) 1 tree))
 
 (defun flatten (tree)
-  (on-trees (nconc left right) (mklist it) tree))
+  (on-trees (nconc left right) (list it) tree))
+
+(flatten '(a g 3 (ddfd)))
 
 (defun rfind-if (fn tree)
   (on-trees (or left right)
@@ -868,6 +901,6 @@
 
 (setf lst (list 1 2 3 50 23))
 
-(sort lst #'(lambda (x y) (> (force x) (force y))))
+(sort lst #'(lambda (x y) (< (force x) (force y))))
 
 ;개방된 형태에서 delyas를 사용하는 것은 약간 불편하다. 실제 응용에서는 그들은 다른 추상의 층 아래에 가려진다.
