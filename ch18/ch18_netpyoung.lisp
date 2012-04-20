@@ -79,6 +79,7 @@
 		    body))))
 
 (defmacro dbind (pat seq &body body)
+  "destructuring-bind를 제네럴하게 작성한 것이다."
   (let ((gseq (gensym)))
     `(let ((,gseq ,seq))
        ,(dbind-ex (destruc pat gseq #'atom) body))))
@@ -111,7 +112,9 @@
 ;; 			  pats))
 ;; 	 ,@body))))
 
+;; loop version
 (defmacro with-matrix (pats ar &body body)
+  "배열의 순서에 기반"
   (let ((arr (gensym)))
     `(let ((,arr ,ar))
        (let ,(loop for pat in pats
@@ -122,6 +125,7 @@
 	 ,@body))))
 
 (defmacro with-array (pat ar &body body)
+  "배열의 좌표에 기반"
   (let ((gar (gensym)))
     `(let ((,gar ,ar))
        (let ,(mapcar #'(lambda (p)
@@ -196,6 +200,7 @@
 		    body))))
 
 (defmacro with-places (pat seq &body body)
+  "call-by-name"
   (let ((gseq (gensym)))
     `(let ((,gseq ,seq))
        ,(wplac-ex (destruc pat gseq #'atom) body))))
@@ -325,14 +330,14 @@
 
 (defun match1 (refs then else)
   (dbind ((pat expr) . rest) refs
-    (cond ((gensym? pat)
+    (cond ((gensym? pat)		;****
 	   `(let ((,pat ,expr))
 	      (if (and (typep ,pat 'sequence)
 		       ,(length-test pat rest))
 		  ,then
 		  ,else)))
 	  ((eq pat '_) then)
-	  ((var? pat)
+	  ((var? pat)			;****
 	   (let ((ge (gensym)))
 	     `(let ((,ge ,expr))
 		(if (or (gensym? ,pat) (equal ,pat ,ge))
@@ -345,16 +350,16 @@
       then
       (let ((then (gen-match (cdr refs) then else)))
 	(if (simple? (caar refs))
-	    (match1 refs then else)
+	    (match1 refs then else)	;****
 	    (gen-match (car refs) then else)))))
 
 (defmacro pat-match (pat seq then else)
   (if (simple? pat)
-      (match1 `((,pat ,seq)) then else)
+      (match1 `((,pat ,seq)) then else)	;***
       (with-gensyms (gseq gelse)
 	`(labels ((,gelse () ,else))
-	   ,(gen-match (cons (list gseq seq)
-			     (destruc pat gseq #'simple?))
+	   ,(gen-match (cons (list gseq seq)		   ;***
+			     (destruc pat gseq #'simple?)) ;***
 		       then
 		       `(,gelse))))))
 
@@ -367,7 +372,6 @@
   (if-match2 (?x ?y ?x ?y) seq
 	    (values ?x ?y)
 	    nil))
-
 
 (abab2 "abab")
 (abab2 #(1 2 1 2))
@@ -385,6 +389,23 @@
 (if-match2 ?x 1
 	   ?x)
 
+;; 패턴(pat)이 단순(simple?)하지 않을때, with-gensyms를 이용하여 젠매치(gen-match)를 시도함
+;; gen-match에서 패턴이 gensym으로 bind되므로, gensym?을 판별하여 length-test를 돌릴 수 있다.
 ;; pat-match(->not simple -> gen-match) -> match1(-> gensym? -> var?)
 (if-match2 (?x ?y) '(1 2)
 	   (list ?x ?y))
+
+
+(let ((a 10))
+  (if-match2 (?x 'a) '(1 a)
+	     (print ?x)
+	     nil))
+
+(destruc '(?x 'a) 'gensym #'simple?)
+;; ((?X (ELT GENSYM 0)) ('A (ELT GENSYM 1)))
+(cons '(gensym seq) '((?X (ELT GENSYM 0)) ('A (ELT GENSYM 1))))
+;; ((gensym seq) . ((?X (ELT GENSYM 0)) ('A (ELT GENSYM 1))))
+(caadar (last
+	 '((gensym seq) . ((?X (ELT GENSYM 0)) ('A (ELT GENSYM 1))))))
+;; elt
+;; length-test하고, binding하고.
