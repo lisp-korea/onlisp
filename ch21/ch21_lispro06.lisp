@@ -300,11 +300,14 @@
 
 ;덜 추상적인 언어에서는 기능을 위해 동작한다. LISP에서는 속도를 위해 동작한다. 다행히 속도를 위해 동작하는 것이 쉽다 : 대부분의 프로그램은 속도 문제에서 몇몇의 심각한 부분이 있다.
 
-http://www.ibm.com/developerworks/kr/library/j-jtp11137.html
-자바 이론과 실습: 포크 찌르기, Part 1
+;http://www.ibm.com/developerworks/kr/library/j-jtp11137.html
+;자바 이론과 실습: 포크 찌르기, Part 1
 
-http://www.electrictoolbox.com/mysql-connection-php-fork/
-MySQL connections and PHP forked processes
+;http://www.electrictoolbox.com/mysql-connection-php-fork/
+;MySQL connections and PHP forked processes
 
-http://www.electrictoolbox.com/article/php/process-forking/
-Process Forking with PHP
+;http://www.electrictoolbox.com/article/php/process-forking/
+;Process Forking with PHP
+
+;http://forum.falinux.com/zbxe/?document_srl=412814
+;fork() 프로세스 생성
