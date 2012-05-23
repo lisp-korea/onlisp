@@ -299,3 +299,12 @@
 ;다른 언어에서는 프로그램이 작동하기 힘든 작업에서 이미 수용적으로 효율적이도록 이어질 수 있다. 당신의 엄지 크기로 바닥을 타일로 채운다면 많은 낭비를 하지않는다. 이 원칙에 소프트웨어를 개발하면, 프로그램이 동작하고 종료될 때, 아이디어를 극복하는 게 어렵다는 것을 발견할 있다. "LISP에서는 시간이 전혀 없어도 프로그램을 작성할 수 있다"고 생각하면, "하지만 그들은 느리다."고 생각한다. 사실, 둘다 상황이 될 수 있다. 당신이 빠른 프로그램을 얻을 수 있지만, 그들을 위해 일을 해야한다. 이러한 측면에서 LISP를 사용하는 것은 가난한 나라에 사는 것 대신 부자 나라에 사는 것과 같다. it may seem unfortunate that one has to work to stay thin, but surely this is better than working to stay alive, and being thin as a matter of course.
 
 ;덜 추상적인 언어에서는 기능을 위해 동작한다. LISP에서는 속도를 위해 동작한다. 다행히 속도를 위해 동작하는 것이 쉽다 : 대부분의 프로그램은 속도 문제에서 몇몇의 심각한 부분이 있다.
+
+http://www.ibm.com/developerworks/kr/library/j-jtp11137.html
+자바 이론과 실습: 포크 찌르기, Part 1
+
+http://www.electrictoolbox.com/mysql-connection-php-fork/
+MySQL connections and PHP forked processes
+
+http://www.electrictoolbox.com/article/php/process-forking/
+Process Forking with PHP
