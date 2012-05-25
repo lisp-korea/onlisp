@@ -1,4 +1,4 @@
-(setq *cont* #'identity)
+(defparameter *cont* #'identity)
 
 (defmacro =lambda (params &body body)
   `#'(lambda (*cont* ,@params) ,@body))
@@ -44,7 +44,8 @@
   (=bind (m n) (message)
     (=values (list m n))))
 
-(baz)
+
+;; (baz)
 
 (=bind (m n) (message) (list m n))
 ;; (LET ((*CONT* #'(LAMBDA (M N) (LIST M N))))
@@ -58,9 +59,6 @@
 	  (funcall g (list 'b x))))))
 
 (funcall *func* 2)
-
-(=defun add1(x)
-  (=values (1+ x)))
 
 (let ((fn (=lambda (n)
 	    (add1 n))))
@@ -76,6 +74,11 @@
 
 (defparameter *saved* nil)
 
+(=defun restart! ()
+  (if *saved*
+      (funcall (pop *saved*))
+      (=values 'done)))
+
 (=defun dft-node (tree)
   (cond ((null tree) (restart!))
 	((atom tree) (=values tree))
@@ -83,23 +86,21 @@
 		 *saved*)
 	   (dft-node (car tree)))))
 
-(=defun restart! ()
-  (if *saved*
-      (funcall (pop *saved*))
-      (=values 'done)))
-
 (=defun dft2 (tree)
   (setq *saved* nil)
   (=bind (node) (dft-node tree)
-    (cond ((eq node 'done) (=values nil))
+    (cond ((eq node 'done) nil)	;(=values nil))
 	  (t (princ node)
 	     (restart!)))))
 
-(setq t1 '(a
-	   (b (d h))
-	   (c e (f i) g))
-      t2 '(1
-	   (2 (3 6 7) 4 5)))
+(defparameter t1 '(a
+		   (b (d h))
+		   (c e (f i) g)))
+
+(defparameter t2 '(1
+		   (2 (3 6 7) 4 5)))
+
+
 (dft2 t1)
 ;; ABDHCEFIG
 
@@ -118,14 +119,14 @@
 
 (rev '(1 2 3))
 
-(defun rev2 (x)
-  (revc x #'identity))
 (defun revc (x k)
   (if (null x)
       (funcall k nil)
       (revc (cdr x)
 	    #'(lambda (w)
 		(funcall k (append w (list (car x))))))))
+
+(defun rev2 (x)
+  (revc x #'identity))
+
 (rev2 '(1 2 3))
-
-
