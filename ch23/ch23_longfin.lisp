@@ -93,6 +93,13 @@
 		`(the sum of ,n1 ,n2)
 		(fail))))
 
+;; (PROGN
+;;  (DEFMACRO PARLOR-TRICK (SUM) `(=PARLOR-TRICK *CONT* ,SUM))
+;;  (DEFUN =PARLOR-TRICK (*CONT* SUM)
+;;    (LET ((*CONT*
+;;           #'(LAMBDA (N1 N2) (IF (= (+ N1 N2) SUM) `(THE SUM OF ,N1 ,N2) (FAIL)))))
+;;      (=TWO-NUMBERS *CONT*))))
+
 ;; CL-USER> (parlor-trick 7)
 ;; (THE SUM OF 2 5)
 ;; CL-USER> (fail)
@@ -218,6 +225,14 @@
 
 (with-parses s'(spot runs)
   (format t "Parsing: ~A~%" parse))
+;; (PROGN
+;;  (SETQ *SENT* '(SPOT RUNS))
+;;  (SETQ *PATHS* NIL)
+;;  (LET ((*CONT*
+;;         #'(LAMBDA (PARSE #:G1412 #:G1413)
+;;             (IF (= #:G1412 (LENGTH *SENT*))
+;;                 (PROGN (FORMAT T "Parsing: ~A~%" PARSE) (FAIL)) (FAIL)))))
+;;    (S 0 '(NIL))))
 
 
 (defun types (word)
@@ -343,3 +358,5 @@
 (with-parses s '(time flies like an arrow)
   (pprint parse))
 
+(with-parses s '(flies)
+  (pprint parse))
